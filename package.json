@@ -4,11 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "gates:allGates": "node gates/allGates",
+    "gates:notGate": "node gates/notGate",
+    "gates:andGate": "node gates/andGate",
+    "gates:twoInputGates": "node gates/twoInputGates",
+    "tic-tac-toe": "node tic-tac-toe/index",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mnist": "^1.1.0",
     "synaptic": "^1.1.4"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0"
   }
 }
