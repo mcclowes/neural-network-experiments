@@ -5,16 +5,16 @@ const {
   Trainer
 } = require("synaptic")
 
-const data = require('./data')
+const data = require('./__data__/data')
 
-const inputLayer = new Layer(9);
-const hiddenLayer = new Layer(30);
+const inputLayer = new Layer(18);
+const hiddenLayer = new Layer(100);
 const outputLayer = new Layer(9);
 
 inputLayer.project(hiddenLayer);
 hiddenLayer.project(outputLayer);
 
-const myNetwork = new Network({
+const ticTacToeNetwork = new Network({
   input: inputLayer,
   hidden: [hiddenLayer],
   output: outputLayer
@@ -25,20 +25,14 @@ const myNetwork = new Network({
 
 const trainingSet = data.training;
 
-const trainer = new Trainer(myNetwork);
+const trainer = new Trainer(ticTacToeNetwork);
 trainer.train(trainingSet, {
-    rate: .2,
-    iterations: 100000,
+    rate: .5,
+    iterations: 10000,
     error: .1,
     shuffle: true,
-    log: 1,
+    log: 10,
     cost: Trainer.cost.CROSS_ENTROPY
 });
 
-trainingSet.map((_,i) => {
-  console.log('>>> --------------------------------')
-  const result = myNetwork.activate(trainingSet[i].input)
-  console.log(result);
-  console.log(trainingSet[i].output);
-  console.log(trainingSet[i].output.map((x,j) => x - result[j]))
-})
+module.exports = ticTacToeNetwork
