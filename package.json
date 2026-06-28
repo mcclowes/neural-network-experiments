@@ -1,8 +1,7 @@
 {
   "name": "neural-training",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Small neural-network experiments (logic gates, tic-tac-toe) using synaptic",
   "scripts": {
     "gates:allGates": "node gates/allGates",
     "gates:notGate": "node gates/notGate",
