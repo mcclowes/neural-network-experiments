@@ -1,91 +1,32 @@
-const { 
-	Neuron,
-	Network,
-	Layer,
-} = require("synaptic")
+const { makeExperiment } = require("./tf");
 
-const and = {
-	type: 'and',
-	rules: [
-		[[0,0], 0],
-		[[0,1], 0],
-		[[1,0], 0],
-		[[1,1], 1],
-	],
+// AND, NAND, OR, XOR, NOR — each trained on its own 2 -> 4 -> 1 net.
+const truthTables = {
+  AND: [[[0, 0], 0], [[0, 1], 0], [[1, 0], 0], [[1, 1], 1]],
+  NAND: [[[0, 0], 1], [[0, 1], 1], [[1, 0], 1], [[1, 1], 0]],
+  OR: [[[0, 0], 0], [[0, 1], 1], [[1, 0], 1], [[1, 1], 1]],
+  XOR: [[[0, 0], 0], [[0, 1], 1], [[1, 0], 1], [[1, 1], 0]],
+  NOR: [[[0, 0], 1], [[0, 1], 0], [[1, 0], 0], [[1, 1], 0]],
+};
+
+const experiments = Object.entries(truthTables).map(([name, table]) =>
+  makeExperiment({
+    name,
+    cases: table.map(([input, output]) => ({ input, output })),
+    inputShape: [2],
+    layers: [
+      { units: 4, activation: "relu" },
+      { units: 1, activation: "sigmoid" },
+    ],
+    learningRate: 0.1,
+    epochs: 500,
+  })
+);
+
+if (require.main === module) {
+  (async () => {
+    for (const experiment of experiments) await experiment.run();
+  })();
 }
 
-const nand = {
-	type: 'nand',
-	rules: [
-		[[0,0], 1],
-		[[0,1], 1],
-		[[1,0], 1],
-		[[1,1], 0],
-	],
-}
-
-const xor = {
-	type: 'xor',
-	rules: [
-		[[0,0], 0],
-		[[0,1], 1],
-		[[1,0], 1],
-		[[1,1], 0],
-	],
-}
-
-const or = {
-	type: 'or',
-	rules: [
-		[[0,0], 0],
-		[[0,1], 1],
-		[[1,0], 1],
-		[[1,1], 1],
-	],
-}
-
-const nor = {
-	type: 'nor',
-	rules: [
-		[[0,0], 1],
-		[[0,1], 0],
-		[[1,0], 0],
-		[[1,1], 0],
-	],
-}
-
-const gates = [and, nand, or, xor, nor]
-
-let twoInputNetwork
-
-gates.map(gate => {
-	const inputLayer = new Layer(2);
-	const hiddenLayer = new Layer(3);
-	const outputLayer = new Layer(1);
-
-	inputLayer.project(hiddenLayer);
-	hiddenLayer.project(outputLayer);
-
-	const twoInputNetwork = new Network({
-		input: inputLayer,
-		hidden: [hiddenLayer],
-		output: outputLayer,
-	});
-
-	// train the network - learn XOR
-	const learningRate = .3;
-	
-	for (let i = 0; i < 20000; i++) {
-		gate.rules.map(rule => {
-			twoInputNetwork.activate(rule[0]);
-			twoInputNetwork.propagate(learningRate, [rule[1]]);
-		})
-	}
-
-	// test the network
-	console.log(gate.type);
-	console.log('[0,0] -> ', Math.round(twoInputNetwork.activate([0,0])));
-	console.log('[0,1] -> ', Math.round(twoInputNetwork.activate([0,1])));
-	console.log('[1,0] -> ', Math.round(twoInputNetwork.activate([1,0])));
-	console.log('[1,1] -> ', Math.round(twoInputNetwork.activate([1,1])));
-})
+module.exports = experiments;

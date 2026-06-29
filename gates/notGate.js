@@ -1,29 +1,16 @@
-const { 
-	Neuron,
-	Network,
-	Layer,
-} = require("synaptic")
+const { makeExperiment } = require("./tf");
+const data = require("./__data__/allGatesData");
 
-const data = require('./__data__/allGatesData')
-
-const inputLayer = new Layer(1); // number of nodes
-const outputLayer = new Layer(1);
-
-inputLayer.project(outputLayer);
-
-const oneInputNetwork = new Network({
-	input: inputLayer,
-	output: outputLayer,
+// NOT is linearly separable, so a single sigmoid neuron suffices.
+const notGate = makeExperiment({
+  name: "NOT",
+  cases: data.gates.not.rules, // [{ input: [0], output: 1 }, ...]
+  inputShape: [1],
+  layers: [{ units: 1, activation: "sigmoid" }],
+  learningRate: 0.1,
+  epochs: 300,
 });
 
-// train the network - learn XOR
-var learningRate = .3;
+if (require.main === module) notGate.run();
 
-for (var i = 0; i < 20000; i++) {
-	data.gates.not.rules.map(rule => {
-		oneInputNetwork.activate(rule.input);
-		oneInputNetwork.propagate(learningRate, [rule.output]);
-	})
-}
-
-module.exports = oneInputNetwork
+module.exports = notGate;
