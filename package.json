@@ -8,6 +8,8 @@
     "gates:andGate": "node gates/andGate",
     "gates:twoInputGates": "node gates/twoInputGates",
     "tic-tac-toe": "node tic-tac-toe/index",
+    "llm": "node llm/charLM",
+    "gpt": "node llm/gptLM",
     "test": "jest"
   },
   "author": "",

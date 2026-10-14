@@ -9,6 +9,9 @@
 # production
 /build
 
+# cached model weights (regenerated on demand)
+llm/__cache__/
+
 # misc
 .DS_Store
 .env
